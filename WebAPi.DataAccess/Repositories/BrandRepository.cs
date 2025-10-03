@@ -132,7 +132,7 @@ namespace WebAPi.DataAccess.Repositories
                 using (SqlConnection connection = new SqlConnection(_connectionString))
                 {
                     await connection.OpenAsync();
-                    SqlCommand cmd = new SqlCommand("USP_GETBRANDBYID", connection);
+                    SqlCommand cmd = new SqlCommand("USP_GetBrandById", connection);
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@BrandId", id);
                     cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
