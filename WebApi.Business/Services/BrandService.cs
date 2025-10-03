@@ -131,6 +131,48 @@ namespace WebApi.Business.Services
             }
         }
 
+        public async Task<ServiceResponse<Brands>> GetByIdAsync(int id)
+        {
+            var result = await _brandRepository.GetByIdAsync(id);
+            try
+            {
+                if (result.OperationStatusCode == 0)
+                {
+                    return new ServiceResponse<Brands>
+                    {
+                        Data = result.Data,
+                        IsSuccess = true,
+                        MessageCode = MessageCodes.Success,
+                        Message = result.Message ?? "Operacion exitosa"
+                    };
+                }
+                switch (result.OperationStatusCode)
+                {
+                    case 50010: // Ejemplo: código para no encontrado
+                        return new ServiceResponse<Brands>
+                        {
+                            Data = null,
+                            IsSuccess = false,
+                            MessageCode = MessageCodes.NotFound,
+                            Message = "La marca no existe"
+                        };
+                    default:
+                        return new ServiceResponse<Brands>
+                        {
+                            Data = null,
+                            IsSuccess = false,
+                            MessageCode = MessageCodes.ErrorDataBase,
+                            Message = "Ocurrió un error inesperado al obtener la marca"
+                        };
+                }
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
 
 
     }

@@ -15,5 +15,6 @@ namespace WebApi.Business.Interfaces
         Task<ServiceResponse<int>> AddAsync(Brands brand);
 
         Task <ServiceResponse <int>> DeactiveAsync (int id);
+        Task<ServiceResponse<Brands>> GetByIdAsync(int id);
     }
 }

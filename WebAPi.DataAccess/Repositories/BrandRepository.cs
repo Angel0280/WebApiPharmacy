@@ -153,14 +153,25 @@ namespace WebAPi.DataAccess.Repositories
                     var returnedValue = Convert.ToInt32(cmd.Parameters["@ReturnValue"].Value);
                     response.Data = brand;
                     response.OperationStatusCode = returnedValue;
+
+                    return new RepositoryResponse<Brands>
+                    {
+                        Data = brand,
+                        OperationStatusCode = returnedValue
+                    };
                 }
             }
             catch (SqlException ex)
             {
-                response.Data = null;
-                response.OperationStatusCode = ex.Number;
+                return new RepositoryResponse<Brands>
+                {
+                    Data = null,
+                    OperationStatusCode = ex.Number,
+                    Message = ex.Message
+                };
+                
             }
-            return response;
+            
         }
     }
 }
