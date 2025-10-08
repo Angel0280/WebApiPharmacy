@@ -11,9 +11,7 @@ namespace WebApi.Business.Interfaces
     public interface IBrandService
     {
         Task<ServiceResponse<IEnumerable<Brands>>> GetAllAsync();
-
         Task<ServiceResponse<int>> AddAsync(Brands brand);
-
         Task <ServiceResponse <int>> DeactiveAsync (int id);
         Task<ServiceResponse<Brands>> GetByIdAsync(int id);
     }

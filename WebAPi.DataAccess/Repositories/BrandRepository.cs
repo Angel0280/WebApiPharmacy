@@ -1,11 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using System.Data;
-using Microsoft.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WebApi.Core.Common;
 using WebApi.Core.Entities;
 using WebAPi.DataAccess.Intarfaces;
@@ -62,7 +57,6 @@ namespace WebAPi.DataAccess.Repositories
             return response;
         }
 
-
         public async Task<RepositoryResponse<int>> AddAsync(Brands brand)
         {
             var response = new RepositoryResponse<int>();
@@ -111,7 +105,7 @@ namespace WebAPi.DataAccess.Repositories
                     var returnedValue = Convert.ToInt32(cmd.Parameters["@ReturnValue"].Value);
 
                     response.Data = returnedValue; // Assuming the stored procedure returns the status of deactivation
-                    response.OperationStatusCode = 0;
+                    response.OperationStatusCode = returnedValue;
                 }
             }
             catch (SqlException ex)

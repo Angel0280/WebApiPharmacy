@@ -64,7 +64,7 @@ namespace WebApi.Business.Services
         {
             var result = await _brandRepository.AddAsync(brand);
 
-            if (result.OperationStatusCode == 0)
+            if (result.OperationStatusCode == 0 )
             {
                 return new ServiceResponse<int>
                 {
@@ -100,7 +100,8 @@ namespace WebApi.Business.Services
         public async Task<ServiceResponse<int>> DeactiveAsync(int id)
         {
             var result = await _brandRepository.DeactiveAsync(id);
-            if (result.OperationStatusCode == 0)
+
+            if (result.OperationStatusCode == 0 )
             {
                 return new ServiceResponse<int>
                 {
@@ -112,7 +113,7 @@ namespace WebApi.Business.Services
             }
             switch (result.OperationStatusCode)
             {
-                case 50010: // Ejemplo: código para no encontrado
+                case 50006: // Ejemplo: código para no encontrado
                     return new ServiceResponse<int>
                     {
                         Data = -1,
@@ -148,7 +149,7 @@ namespace WebApi.Business.Services
                 }
                 switch (result.OperationStatusCode)
                 {
-                    case 50010: // Ejemplo: código para no encontrado
+                    case 50009: // Ejemplo: código para no encontrado
                         return new ServiceResponse<Brands>
                         {
                             Data = null,
@@ -168,7 +169,6 @@ namespace WebApi.Business.Services
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

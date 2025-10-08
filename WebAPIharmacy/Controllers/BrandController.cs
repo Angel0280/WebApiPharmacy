@@ -71,6 +71,58 @@ namespace WebApiPharmacy.Controllers
 
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetByIdAsync(int id)
+        {
+            if (id <= 0 || id == null)
+            {
+                var response = new UnsuccessfulResponseDto()
+                {
+                    Code = "400",
+                    Message = "Id proporcionado debe de ser mayor a 0",
+                    Details = new { info = "Error en el formato de valor enviado" }
+                };
+                return BadRequest(response);
+            }
+            var serviceResponse = await _brandsService.GetByIdAsync(id);
+
+            if (serviceResponse.IsSuccess)
+            {
+                var brandDto = new GetAllBrandDto
+                {
+                    Id = serviceResponse.Data!.Id,
+                    Name = serviceResponse.Data.BrandName,
+                    BrandDescription = serviceResponse.Data.Description!,
+                    RegisteredDate = serviceResponse.Data.RegisteredDate,
+                    IsActive = serviceResponse.Data.IsActive
+                };
+
+                return Ok(brandDto);
+            }
+
+            switch (serviceResponse.MessageCode)
+            {
+                case MessageCodes.NotFound:
+                    var unsuccessfulResponse = new UnsuccessfulResponseDto
+                    {
+                        Code = "400",
+                        Message = serviceResponse.Message ?? "No se encontro la marca",
+                        Details = new { info = serviceResponse.Message ?? "No se encontro el recurso solicitado" }
+                    };
+                    return BadRequest(unsuccessfulResponse);
+
+                default:
+                    unsuccessfulResponse = new UnsuccessfulResponseDto
+                    {
+                        Code = "500",
+                        Message = "Ocurrio un error",
+                        Details = new { info = serviceResponse.Message ?? "Error interno" }
+                    };
+                    return StatusCode(500, unsuccessfulResponse);
+            }
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddAsync(AddBrandsDto brandDto)
         {
@@ -146,57 +198,7 @@ namespace WebApiPharmacy.Controllers
             }
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetByIdAsync(int id)
-        {
-            if (id <= 0 || id==null)
-            {
-                var response = new UnsuccessfulResponseDto ()
-                {
-                    Code = "400",
-                    Message = "Id proporcionado debe de ser mayor a 0",
-                    Details = new { info = "Error en el formato de valor enviado"}
-                };
-                return BadRequest(response);
-            }
-            var serviceResponse = await _brandsService.GetByIdAsync(id);
-
-            if (serviceResponse.IsSuccess)
-            {
-                var brandDto = new GetAllBrandDto
-                {
-                    Id = serviceResponse.Data!.Id,
-                    Name = serviceResponse.Data.BrandName,
-                    BrandDescription = serviceResponse.Data.Description!,
-                    RegisteredDate = serviceResponse.Data.RegisteredDate,
-                    IsActive = serviceResponse.Data.IsActive
-                };
-
-                return Ok(brandDto);
-            }
-
-            switch (serviceResponse.MessageCode)
-            {
-                case MessageCodes.NotFound:
-                    var unsuccessfulResponse = new UnsuccessfulResponseDto
-                    {
-                        Code = "400",
-                        Message = serviceResponse.Message ?? "No se encontro una categoria",
-                        Details = new { info = serviceResponse.Message ?? "No se encontro el recurso solicitado" }
-                    };
-                    return BadRequest(unsuccessfulResponse);
-
-                default:
-                    unsuccessfulResponse = new UnsuccessfulResponseDto
-                    {
-                        Code = "500",
-                        Message = "Ocurrio un error",
-                        Details = new { info = serviceResponse.Message ?? "Error interno" }
-                    };
-                    return StatusCode(500, unsuccessfulResponse);
-            }
-           
-        }
+       
         
     }
 
