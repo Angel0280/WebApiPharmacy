@@ -1,4 +1,4 @@
-﻿namespace WebApiPharmacy.DTOs
+﻿namespace WebApi.Business.DTOs
 {
     public class UnsuccessfulResponseDto
     {

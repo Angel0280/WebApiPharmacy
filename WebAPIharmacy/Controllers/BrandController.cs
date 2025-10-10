@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using WebApi.Business.DTOs;
 using WebApi.Business.Interfaces;
 using WebApi.Core.Common;
-using WebApiPharmacy.DTOs;
+using WebApi.Core.Entities;
+
 
 namespace WebApiPharmacy.Controllers
 {
@@ -169,9 +171,21 @@ namespace WebApiPharmacy.Controllers
         [HttpPatch]
         public async Task<IActionResult> DeactiveAsync(int id)
         {
+            if (id <= 0 || id == null)
+            {
+                var response = new UnsuccessfulResponseDto()
+                {
+                    Code = "400",
+                    Message = "Id proporcionado debe de ser mayor a 0",
+                    Details = new { info = "Error en el formato de valor enviado" }
+                };
+                return BadRequest(response);
+            }
             var serviceResponse = await _brandsService.DeactiveAsync(id);
+
             if (serviceResponse.IsSuccess)
             {
+
                 var apiResponse = new ApiResponse<int>
                 {
                     Data = serviceResponse.Data,
@@ -198,8 +212,16 @@ namespace WebApiPharmacy.Controllers
             }
         }
 
-       
-        
+        [HttpPut("{id}")]
+        public async Task<ServiceResponse<Brands>> UpdateAsync(int id, Brands brands)
+        {
+            var serviceResponse = await _brandsService.UpdateAsync(id, brands);
+            return serviceResponse;
+        }
+
+
+
+
     }
 
 

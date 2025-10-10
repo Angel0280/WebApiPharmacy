@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using System.Data;
 using WebApi.Business.Interfaces;
 using WebApi.Core.Common;
 using WebApi.Core.Entities;
 using WebAPi.DataAccess.Intarfaces;
 
-namespace WebApi.Business.Services
+namespace WebAPi.DataAccess.Repositories
 {
     public class BrandService : IBrandService
     {
+        // Implementacion del metodo GetAllAsync para obtener todas las marcas
         private readonly IBrandRepository _brandRepository;
-
         public BrandService(IBrandRepository brandRepository)
         {
             _brandRepository = brandRepository;
         }
-
-        public async Task<ServiceResponse<IEnumerable<Brands>>> GetAllAsync() 
+        public async Task<ServiceResponse<IEnumerable<Brands>>> GetAllAsync()
         {
             var result = await _brandRepository.GetAllAsync();
 
@@ -32,8 +29,8 @@ namespace WebApi.Business.Services
                     MessageCode = MessageCodes.Success,
                     Message = "Operacion exitosa"
                 };
-                
-               
+
+
             }
             switch (result.OperationStatusCode)
             {
@@ -45,7 +42,7 @@ namespace WebApi.Business.Services
                         MessageCode = MessageCodes.NoData,
                         Message = "No se encontraron registros"
                     };
-                    
+
 
                 default:
                     return new ServiceResponse<IEnumerable<Brands>>
@@ -57,14 +54,14 @@ namespace WebApi.Business.Services
                     };
 
             }
-            
+
         }
 
         public async Task<ServiceResponse<int>> AddAsync(Brands brand)
         {
             var result = await _brandRepository.AddAsync(brand);
 
-            if (result.OperationStatusCode == 0 )
+            if (result.OperationStatusCode == 0)
             {
                 return new ServiceResponse<int>
                 {
@@ -101,7 +98,7 @@ namespace WebApi.Business.Services
         {
             var result = await _brandRepository.DeactiveAsync(id);
 
-            if (result.OperationStatusCode == 0 )
+            if (result.OperationStatusCode == 0)
             {
                 return new ServiceResponse<int>
                 {
@@ -172,8 +169,49 @@ namespace WebApi.Business.Services
                 throw;
             }
         }
+        public async Task<ServiceResponse<Brands>> UpdateAsync(int id, Brands brands)
+        {
+            var result = await _brandRepository.GetByIdAsync(id);
+            if (result.OperationStatusCode == 0)
+            {
+                return new ServiceResponse<Brands>
+                {
+                    Data = result.Data,
+                    IsSuccess = true,
+                    MessageCode = MessageCodes.Success,
+                    Message = "Marca actualizada correctamente"
+                };
+            }
+            switch (result.OperationStatusCode)
+            {
+                case 50009: // Ejemplo: código para no encontrado
+                    return new ServiceResponse<Brands>
+                    {
+                        Data = null,
+                        IsSuccess = false,
+                        MessageCode = MessageCodes.NotFound,
+                        Message = "La marca no existe"
+                    };
+                case 50005: // Ejemplo: código para duplicado
+                    return new ServiceResponse<Brands>
+                    {
+                        Data = null,
+                        IsSuccess = false,
+                        MessageCode = MessageCodes.DuplicateData,
+                        Message = "La marca ya existe"
+                    };
+                default:
+                    return new ServiceResponse<Brands>
+                    {
+                        Data = null,
+                        IsSuccess = false,
+                        MessageCode = MessageCodes.ErrorDataBase,
+                        Message = "Ocurrió un error inesperado al actualizar la marca"
+                    };
 
 
-
+            }
+            
+        }
     }
 }

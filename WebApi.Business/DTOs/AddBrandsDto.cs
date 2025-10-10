@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WebApiPharmacy.DTOs
+namespace WebApi.Business.DTOs
 {
     public class AddBrandsDto
     {

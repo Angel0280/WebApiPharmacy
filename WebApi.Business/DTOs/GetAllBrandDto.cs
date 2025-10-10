@@ -1,4 +1,4 @@
-﻿namespace WebApiPharmacy.DTOs
+﻿namespace WebApi.Business.DTOs
 {
     public class GetAllBrandDto
     {
@@ -9,12 +9,5 @@
         public bool IsActive { get; set; }
 
         //Omitir la propiedad IsActive
-    }
-
-    public class  AddBrands
-    {
-        public string Name { get; set; }
-        public string BrandDescription { get; set; }
-
     }
 }

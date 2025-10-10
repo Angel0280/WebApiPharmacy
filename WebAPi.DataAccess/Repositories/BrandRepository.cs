@@ -1,5 +1,7 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using Azure;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
+using System.ComponentModel;
 using System.Data;
 using WebApi.Core.Common;
 using WebApi.Core.Entities;
@@ -15,6 +17,7 @@ namespace WebAPi.DataAccess.Repositories
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection")!;
         }
+
         public async Task<RepositoryResponse<IEnumerable<Brands>>> GetAllAsync()
         {
             var brands = new List<Brands>();
@@ -104,7 +107,7 @@ namespace WebAPi.DataAccess.Repositories
                     await cmd.ExecuteNonQueryAsync();
                     var returnedValue = Convert.ToInt32(cmd.Parameters["@ReturnValue"].Value);
 
-                    response.Data = returnedValue; // Assuming the stored procedure returns the status of deactivation
+                    response.Data = returnedValue;
                     response.OperationStatusCode = returnedValue;
                 }
             }
@@ -166,6 +169,50 @@ namespace WebAPi.DataAccess.Repositories
                 
             }
             
+        }
+
+        public async Task<RepositoryResponse<Brands>> UpdateAsync(int id, Brands brands)
+        {
+            var response = new RepositoryResponse<Brands>();
+            Brands brandUpdate = null;
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    await connection.OpenAsync();
+                    SqlCommand cmd = new SqlCommand("USP_EDITBRANDS", connection);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@BrandId", brands.Id);
+                    cmd.Parameters.AddWithValue("@BrandName", brands.BrandName);
+                    cmd.Parameters.AddWithValue("@BrandDescription", brands.Description);
+                    cmd.Parameters.AddWithValue("@IsActive", brands.IsActive);
+                    cmd.Parameters.Add("@ReturnValue", SqlDbType.Int).Direction = ParameterDirection.ReturnValue;
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            brandUpdate = new Brands
+                            {
+                                Id = (int)reader["BrandId"],
+                                BrandName = reader["BrandName"].ToString()!,
+                                Description = reader["BrandDescription"].ToString(),
+                                IsActive = (bool)reader["Isactive"]
+                            };
+                        }
+                    }
+                    var returnedValue = Convert.ToInt32(cmd.Parameters["@ReturnValue"].Value);
+                    response.Data = brandUpdate;
+                    response.OperationStatusCode = returnedValue;
+                }
+            }
+            catch (SqlException ex)
+            {
+                response.Data = null;
+                response.OperationStatusCode = ex.Number;
+                response.Message = ex.Message;
+            }
+            return response;
         }
     }
 }

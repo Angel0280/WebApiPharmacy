@@ -21,5 +21,7 @@ namespace WebAPi.DataAccess.Intarfaces
         //Firma para obtener una marca por id
         Task<RepositoryResponse<Brands>> GetByIdAsync(int id);
 
+        //Task<RepositoryResponse<Brands>> UpdateAsync(int id, Brands brands);
+
     }
 }

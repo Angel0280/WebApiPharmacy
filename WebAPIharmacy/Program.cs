@@ -16,6 +16,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IBrandService, BrandService>();
 builder.Services.AddScoped<IBrandRepository, BrandRepository>();
 
+builder.Services.AddScoped<IPresentationRepository, PresentationRepository>();
+builder.Services.AddScoped<IPresentationService, PresentationService>();
+
 
 var app = builder.Build();
 
